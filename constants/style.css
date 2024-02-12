@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap");
+
+html, body,
+
+/* set font */
+[class*="css"] {
+    font-family: 'Noto Sans TC',sans-serif !important;
+    font-size: 20px !important;
+}
+[data-testid="stMarkdownContainer"] {
+    /* 各種地方 */
+    font-family: 'Noto Sans TC', sans-serif;
+}
+[class*="st-bl st-ak st-bm st-bn st-bo st-ar st-bp st-bq st-br"] {
+    /* 選擇功能下拉選單的字 */
+    font-family: 'Noto Sans TC', sans-serif;
+}
+[role*="button"] {
+    /* 選擇停車場的 placeholder */
+    font-family: 'Noto Sans TC', sans-serif;
+}
+[class*="st-emotion-cache"] {
+    /* 各種地方 & 按鈕內的字 */
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+/* hide side bar button */
+[data-testid="collapsedControl"] {
+    display: none
+}
+
+/* hide original top bar */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* modify new top bar */
+li.nav-item{margin: 0;}
+.logo-img{width : 20px;margin-right : 3px;}
+
+/* modify go button */
+div.stButton {
+    text-align:center;
+    font-family: 'Noto Serif TC', sans-serif;
+}
+div.stButton > button{
+    background-color: #3498DB;
+    color:white;
+    font-size:20px;
+    height:2.8em;width:10em;
+    border: 2px solid #3495DB;
+    border-radius:10px 10px 10px 10px;
+}
+div.stButton > button:hover {
+    background-color: #ffffff;
+    color:#3498DB;
+    border: 2px solid #3495DB;
+}
+div.stButton > button:focus {
+    background-color: #ffffff;
+}
+
+/* multiselect options width */
+.stMultiSelect [data-baseweb=select] span{
+    max-width: 250px;
+    font-size: 0.6rem;
+}
+
+/* fit mobile layout */
+section[tabindex="0"] {
+    overflow-x: hidden;
+}

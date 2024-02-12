@@ -1,0 +1,7 @@
+streamlit==1.29.0
+streamlit_extras
+st-pages
+
+pandas
+plotly
+sqlalchemy
