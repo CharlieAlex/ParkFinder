@@ -19,21 +19,21 @@
 # 功能
 ParkFinder 一共有四大功能
 
-## 追蹤趨勢變化
+### 追蹤趨勢變化
 <img src="https://github.com/CharlieAlex/ParkFinder/blob/main/images/feature_1.png" width="500">
 針對特定停車場，統計工作日與週末的平均剩餘車位，以解決如工作日下班時段，會不會沒有車位可停的疑慮。
 
-## 比較數量差異
+### 比較數量差異
 <img src="https://github.com/CharlieAlex/ParkFinder/blob/main/images/feature_2.png" width="500">
 
 同時聚焦多個停車場，比較同一時段剩餘車位的數量差異，用以制定最佳的停車場月票購買策略。
 
-## 查詢歷史資料
+### 查詢歷史資料
 <img src="https://github.com/CharlieAlex/ParkFinder/blob/main/images/feature_3.png" width="500">
 
 完整紀錄個別停車場的歷史可停車位資料，隨時查閱最精準的數據。
 
-## 整合地圖資訊
+### 整合地圖資訊
 <img src="https://github.com/CharlieAlex/ParkFinder/blob/main/images/feature_4.png" width="500">
 
 
