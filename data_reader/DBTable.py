@@ -1,10 +1,18 @@
 """
 Define Table classes for the ORM structure
 """
-from sqlalchemy.orm import relationship, declarative_base
-from sqlalchemy import (Column, Integer, Float, DateTime,
-                        SmallInteger, String, Text, DECIMAL,
-                        ForeignKey)
+from sqlalchemy import (
+    DECIMAL,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    SmallInteger,
+    String,
+    Text,
+)
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
@@ -48,8 +56,9 @@ class ParkingInfo(Base):
 class AggWeekly(Base):
     __tablename__ = 'agg_weekly'
 
-    id    = Column(SmallInteger, primary_key=True)
-    parkid = Column(SmallInteger,nullable=False)
-    week_day = Column(SmallInteger, nullable=False)
-    sect = Column(SmallInteger, nullable=False)
-    average_space = Column("Average Space", Float, nullable=False)
+    parkid = Column(SmallInteger, primary_key=True)
+    name = Column(Text)
+    week_day = Column("day_of_week", SmallInteger, nullable=False)
+    sect = Column("hour_of_day", SmallInteger, nullable=False)
+    average_space = Column("mean", Float, nullable=False)
+    std = Column("std_dev", Float, nullable=False)

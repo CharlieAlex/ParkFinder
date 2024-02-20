@@ -2,23 +2,22 @@
 Each Feature class represents a set of SQL command, column generation ,rule of aggregation, and visualization
 """
 
-from abc import ABC, abstractmethod
-from functools import lru_cache, cached_property
-import pandas as pd
-from plotly.graph_objects import Figure
-import plotly.express as px
-from sqlalchemy.orm import Query, Session
-from sqlalchemy import func
 import datetime
-
-from data_reader.DBTable import ParkingInfo, ParkingSpace, AggWeekly
-from pipeline.helper import line_with_errors
-from data_reader.api import TimeSection
-
-from typing import List, Dict, Union, Tuple, Callable
+from abc import ABC, abstractmethod
 from enum import IntEnum
+from functools import cached_property, lru_cache
+from typing import Callable, Dict, List, Tuple, Union
 
+import pandas as pd
+import plotly.express as px
 import streamlit as st
+from plotly.graph_objects import Figure
+from sqlalchemy import func
+from sqlalchemy.orm import Query, Session
+
+from data_reader.api import TimeSection
+from data_reader.DBTable import AggWeekly, ParkingInfo, ParkingSpace
+from pipeline.helper import line_with_errors
 
 HOUR = 1e9*3600
 DAYOFWEEK_STR_MAP = {i+1 :f"週{v}" for i,v in enumerate("日一二三四五六")}
@@ -101,36 +100,49 @@ class WeekdayAverageByHour(BaseFeatureClass):
         """
         The auto-generated `sqlalchemy.orm.Query` object from ids passed in the class constructor.
         """
-        subquery = (
-            Query([
-                ParkingInfo.parkname                  .label('Name'),
-                ParkingSpace.time,
-                ParkingSpace.transqty               .label('space'),
-                ((
-                    func.hour(ParkingSpace.time) * 60 +
-                    func.minute(ParkingSpace.time)
-                ) // self.time_interval
-                )                                   .label('sect'),
-                func.dayofweek(ParkingSpace.time)   .label('week_day')
-            ])
-            .join(ParkingSpace, ParkingSpace.parkid == ParkingInfo.parkid)
-            .filter(
-                ParkingSpace.parkid.in_(self.parking_ids)
-                )
-            .subquery()
-        )
+        # subquery = (
+        #     Query([
+        #         ParkingInfo.parkname                  .label('Name'),
+        #         ParkingSpace.time,
+        #         ParkingSpace.transqty               .label('space'),
+        #         ((
+        #             func.hour(ParkingSpace.time) * 60 +
+        #             func.minute(ParkingSpace.time)
+        #         ) // self.time_interval
+        #         )                                   .label('sect'),
+        #         func.dayofweek(ParkingSpace.time)   .label('week_day')
+        #     ])
+        #     .join(ParkingSpace, ParkingSpace.parkid == ParkingInfo.parkid)
+        #     .filter(
+        #         ParkingSpace.parkid.in_(self.parking_ids)
+        #         )
+        #     .subquery()
+        # )
 
-        # Build the main query
+        # # Build the main query
+        # main_query = (
+        #     Query([
+        #         subquery.c.Name,
+        #         subquery.c.week_day     .label("week_day"),
+        #         subquery.c.sect         .label("time_section"),
+        #         func.AVG(subquery.c.space).label('average_space'),
+        #         func.STDDEV(subquery.c.space).label('std')
+        #     ])
+        #     .group_by(subquery.c.Name, subquery.c.week_day, subquery.c.sect)
+        #     .order_by(subquery.c.Name.desc(), subquery.c.week_day, subquery.c.sect)
+        # )
+
         main_query = (
             Query([
-                subquery.c.Name,
-                subquery.c.week_day     .label("week_day"),
-                subquery.c.sect         .label("time_section"),
-                func.AVG(subquery.c.space).label('average_space'),
-                func.STDDEV(subquery.c.space).label('std')
+                AggWeekly.name.label("Name"),
+                AggWeekly.week_day,
+                AggWeekly.sect.label("time_section"),
+                AggWeekly.average_space,
+                AggWeekly.std,
             ])
-            .group_by(subquery.c.Name, subquery.c.week_day, subquery.c.sect)
-            .order_by(subquery.c.Name.desc(), subquery.c.week_day, subquery.c.sect)
+            .filter(
+                AggWeekly.parkid.in_(self.parking_ids)
+            )
         )
 
         return main_query
@@ -282,10 +294,13 @@ class WeekdayAverageMap(WeekdayAverageByHour):
         Basically draws all ids
         """
 
-        query = Query(
-            [ParkingInfo.parkname.label("Name"),
-            ParkingInfo.lat, ParkingInfo.lon,
-            AggWeekly.average_space, AggWeekly.sect, AggWeekly.week_day]).join(ParkingInfo, AggWeekly.parkid == ParkingInfo.parkid)
+        query = (Query([
+                ParkingInfo.parkname.label("Name"),
+                ParkingInfo.lat, ParkingInfo.lon,
+                AggWeekly.average_space, AggWeekly.sect, AggWeekly.week_day
+            ])
+            .join(ParkingInfo, AggWeekly.parkid == ParkingInfo.parkid)
+        )
 
         return query
 
